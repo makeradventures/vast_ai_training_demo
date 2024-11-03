@@ -16,7 +16,7 @@ class TrainingConfig:
     def __init__(self):
         self.batch_size = 128
         self.learning_rate = 3e-4
-        self.epochs = 15
+        self.epochs = 100
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model_name = "vit_tiny_patch16_224"
         # Use workspace directory for vast.ai
