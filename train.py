@@ -89,19 +89,26 @@ def save_checkpoint(model, optimizer, epoch, checkpoint_dir, is_final=False):
     try:
         Path(checkpoint_dir).mkdir(parents=True, exist_ok=True)
         checkpoint_path = Path(checkpoint_dir) / "latest.pt"
-        torch.save({
+        checkpoint_data = {
             'epoch': epoch,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
-        }, checkpoint_path)
+        }
+        torch.save(checkpoint_data, checkpoint_path)
         
+        # Upload to W&B
+        try:
+            wandb.save(str(checkpoint_path))  # Upload latest checkpoint
+        except Exception as e:
+            print(f"Warning: Could not upload checkpoint to W&B: {e}")
+            
         if is_final:
             final_path = Path(checkpoint_dir) / f"final_epoch_{epoch}.pt"
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-            }, final_path)
+            torch.save(checkpoint_data, final_path)
+            try:
+                wandb.save(str(final_path))  # Upload final checkpoint
+            except Exception as e:
+                print(f"Warning: Could not upload final checkpoint to W&B: {e}")
             print(f"Saved final checkpoint to {final_path}")
     except Exception as e:
         print(f"Warning: Could not save checkpoint: {e}")
