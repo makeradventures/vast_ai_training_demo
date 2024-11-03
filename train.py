@@ -204,7 +204,7 @@ def main():
     
     try:
         # Create model
-        model = timm.create_model(config.model_name, pretrained=True, num_classes=10)
+        model = timm.create_model(config.model_name, pretrained=False, num_classes=10)
         model = model.to(config.device)
         
         # Setup training
